@@ -1,18 +1,32 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:store/resources/FireStore_Provider.dart';
 import '../../resources/db_provider.dart';
 import '../../models/item_model.dart';
 
 class AddPage extends StatefulWidget {
+  final ItemModel item;
+
+  const AddPage({Key key, this.item}) : super(key: key);
   @override
   _AddPageState createState() => _AddPageState();
 }
 
 class _AddPageState extends State<AddPage> {
+  TextEditingController _titlec =TextEditingController();
+  TextEditingController _descriptionc=TextEditingController();
+
   String title;
   String description;
   File _image;
+initState(){
+  if(widget.item!=null){
+_titlec.text=widget.item.title;
+_descriptionc.text=widget.item.description;
+  }
+  super.initState();
+}
   _showOptionsDialog() {
     showDialog(
         context: context,
@@ -97,11 +111,8 @@ class _AddPageState extends State<AddPage> {
 
   TextField _buildTitleField() {
     return TextField(
-          onChanged: (value) {
-            setState(() {
-              title = value;
-            });
-          },
+      controller: _titlec,
+          
           decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintText: "title",
@@ -111,12 +122,8 @@ class _AddPageState extends State<AddPage> {
 
   TextField _buildDescriptionField() {
     return TextField(
-          onChanged: (value) {
-            setState(() {
-              description = value;
-            });
-          },
-          maxLines: 4,
+      controller: _descriptionc,
+                    maxLines: 4,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             hintText: "Description",
@@ -157,11 +164,20 @@ class _AddPageState extends State<AddPage> {
             label: Text("Save"),
             color: Colors.blue,
             onPressed: () async {
-              if (title == null || description == null || _image == null) {
+              if (_titlec == null || _descriptionc == null) {
                 return;
               }
-              ItemModel item =ItemModel(title: title,description: description,image: _image.path);
-              await DbProvider().addItem(item);
+            //  ItemModel item =ItemModel(title: title,description: description,image: _image.path);
+            //  await DbProvider().addItem(item);
+            Map<String ,dynamic>item={
+              'title':_titlec.text,
+              'description':_descriptionc.text,
+            };
+            if(widget.item!=null){
+              await FireStoreProvider().updateItem(widget.item.id,item);
+            }else{
+             await FireStoreProvider().addItems(item);
+            }
               Navigator.pop(context);
             },
           ),

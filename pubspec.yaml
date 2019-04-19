@@ -30,7 +30,7 @@ dependencies:
   path_provider: ^0.5.0
   firebase_auth: ^0.8.4
   cloud_firestore: ^0.9.11
-  
+  firebase_core: ^0.3.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

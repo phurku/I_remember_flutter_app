@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:store/resources/FireStore_Provider.dart';
+import 'package:store/resources/firebase_auth_provider.dart';
 import './add.dart';
 import './detail.dart';
 import '../../resources/db_provider.dart';
@@ -18,6 +19,7 @@ class _HomePageState extends State<HomePage> {
 
   void initState() {
     super.initState();
+    
   }
 
   Future<List> getItems() async {
@@ -30,10 +32,12 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text("Home"),
         leading: Icon(Icons.home),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.deepOrangeAccent,
         actions: <Widget>[
           IconButton(icon: Icon(Icons.exit_to_app),
-          onPressed: (){},)
+          onPressed: (){
+            FirebaseAuthProvider().logout();
+          },)
         ],
       ),
       body: StreamBuilder(
@@ -56,16 +60,20 @@ class _HomePageState extends State<HomePage> {
                         MaterialPageRoute(builder: (_) => DetailPage(item: item, onDelete: _delete,))),
                     isThreeLine: true,
                     title: Text(item.title),
+                    onLongPress: (){Navigator.push(context, MaterialPageRoute(
+                      builder: (context)=>AddPage(item: item,)
+                    ));},
                     trailing: IconButton(
                       icon: Icon(Icons.delete),
+                      
                       onPressed: ()=>_delete(item),
                     ),
-                    leading: CircleAvatar(
-                      backgroundImage: FileImage(
-                        File(item.image),
-                      ),
-                      radius: 34,
-                    ),
+                   // leading: CircleAvatar(
+                     // backgroundImage: FileImage(
+                      //  File(item.image),
+                    //  ),
+                     // radius: 34,
+                   // ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -108,12 +116,12 @@ class _HomePageState extends State<HomePage> {
             ),
             FlatButton(
               child: Text("Delete"),
-              onPressed: (){
-                removeItem(item);
+              onPressed:(){
+                removeItem(item.id);
+                FireStoreProvider().getItems();
                 Navigator.pushReplacement(context, MaterialPageRoute(
-                  builder: (_) => HomePage()
+                  builder: (_)=>HomePage()
                 ));
-                
               }
             )
           ],
@@ -122,10 +130,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void removeItem(ItemModel item) {
-    setState(() { 
-     // DbProvider().deleteItem(item.id);
-    });
+  // void removeItem(ItemModel item) {
+  //   setState(() { 
+  //     //DbProvider().deleteItem(item.id);
+  //   });
+  // }
+  removeItem(id){
+    FireStoreProvider().delete(id);
   }
 
 }

@@ -9,6 +9,9 @@ class FirebaseAuthProvider {
   }
   
   Future<FirebaseUser>signup(String email,String password){
-    return _auth.signInWithEmailAndPassword(email:email,password:password);
+    return _auth.createUserWithEmailAndPassword(email:email,password:password);
+  }
+  Future<void>logout(){
+    return _auth .signOut();
   }
 }

@@ -1,17 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:store/resources/firebase_auth_provider.dart';
-class LoginPage extends StatefulWidget {
-  @override
-  _LoginPageState createState() => _LoginPageState();
-}
 
-class _LoginPageState extends State<LoginPage> {
-
-  final TextEditingController _emailc=TextEditingController();
-  final TextEditingController _passwordc=TextEditingController();
+class LoginPage extends StatelessWidget {
   Widget _buildPageContent(BuildContext context) {
     return Container(
+
       padding: EdgeInsets.all(20.0),
       color: Colors.grey.shade800,
       child: ListView(
@@ -53,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   Expanded(
                     child: RaisedButton(
-                      onPressed: ()=>login(),
+                      onPressed: (){},
                       color: Colors.cyan,
                       child: Text('Login', style: TextStyle(color: Colors.white70, fontSize: 16.0),),
                     ),
@@ -73,22 +65,11 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-  void login()async{
-    print(_emailc.text);
-    print(_passwordc.text);
-    try {
-      FirebaseUser user=await FirebaseAuthProvider().login(_emailc.text,_passwordc.text);
-      if(user!=null)
-      Navigator.pushNamed(context, 'home');
-    }
-     catch (e) {
-       print(e.message);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       body: _buildPageContent(context),
     );
   }
